@@ -511,6 +511,14 @@ safetensors_rust.SafetensorError: Error while deserializing header: header too l
 
 ---
 
+#### 🐛 GitHub 推送 403 排障
+
+**疑问解答**：用户确认使用自己的 `icn1Vad` 账号。检查发现登录正确，但 `origin` 指向他人的 `joyehuang/minimind-notes`，该账号对目标仓库只有读取权限。
+
+**完成修复**：在 `icn1Vad` 账号下创建 fork，将 `origin` 指向自己的 fork，原仓库保留为 `upstream`；本地 `master` 跟踪 `origin/master`，默认推送远程设置为 `origin`。
+
+**验证**：API 确认新仓库具有推送权限；`git push --dry-run origin master` 通过，`git ls-remote` 确认远程提交未变化。用户要求暂不提交，本轮没有新增提交，也没有实际推送；上一轮已有的 `9ab406e` 仍在本地。详细说明见知识库 Q21。
+
 **最后更新**：2026-11-10
 **学习进度**：Tier 1 完成 ✅ + 完整架构理解 ✅
 

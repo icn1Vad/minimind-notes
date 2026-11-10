@@ -1661,6 +1661,23 @@ Set-Location F:\minimind-notes
 
 ---
 
+**Q21: 已登录自己的 GitHub 账号，为什么推送仍然返回 403？**
+
+A: 认证成功不代表对目标仓库有写权限。本次 `gh api user` 确认登录账号为 `icn1Vad`，但原来的 `origin` 指向 `joyehuang/minimind-notes`；API 返回该账号对原仓库的 `permissions.push` 为 `false`。
+
+**修复结果（2026-11-10）**：
+
+- 在 `icn1Vad` 账号下创建 [minimind-notes fork](https://github.com/icn1Vad/minimind-notes)，确认 `permissions.push` 为 `true`。
+- 原仓库保留为 `upstream`，`origin` 改为 `https://github.com/icn1Vad/minimind-notes.git`。
+- 本地 `master` 跟踪 `origin/master`，仓库级 `remote.pushDefault` 设置为 `origin`。
+- `git push --dry-run origin master` 通过。预检后用 `git ls-remote` 确认远程 `master` 仍为 `e6380e5`，本地已有提交 `9ab406e` 尚未上传。
+
+**日后排查顺序**：先检查 `gh api user --jq .login`、`git remote -v`，再通过仓库 API 检查 `permissions.push`。`git config user.name` 和 `user.email` 是提交作者信息，修改它们不能授予仓库写权限。参考：[GitHub 远程仓库配置说明](https://docs.github.com/en/get-started/git-basics/managing-remote-repositories)。
+
+**操作约束**：本轮按用户要求不新增提交、不实际推送；笔记改动保留在工作区。
+
+---
+
 ## 📊 重要公式汇总
 
 ### RMSNorm
