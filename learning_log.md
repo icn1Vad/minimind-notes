@@ -486,7 +486,32 @@ safetensors_rust.SafetensorError: Error while deserializing header: header too l
 
 ---
 
-**最后更新**：2026-01-18
+### 2026-11-10：Windows 归一化实验依赖排障
+
+#### ✅ 完成事项
+
+- [x] 确认系统 Python 3.11.9 和项目已有 `venv` 都缺少 `torch`。
+- [x] 定位完整依赖安装的阻塞：`ujson==5.1.0` 源码编译缺少 Microsoft C++ Build Tools。
+- [x] 在已有 `venv` 安装该实验所需的 `torch==2.6.0`（CPU）、`numpy==1.26.4`、`matplotlib==3.10.0`。
+- [x] 成功运行 `exp1_gradient_vanishing.py`，生成 `modules/01-foundation/01-normalization/experiments/results/gradient_vanishing.png`。
+- [x] `python -m pip check` 通过；在知识库 Q20 记录复现命令和解释器选择方法。
+
+#### 🐛 问题与解决方案
+
+**位置与原因**：在实验目录执行 `pip install -r requirements.txt` 时找不到根目录的文件；回到根目录后，安装又在 `ujson` 构建阶段中止，所以不能将下载完成视为 `torch` 已安装。
+
+**修复**：从 `F:\minimind-notes` 直接调用 `.\venv\Scripts\python.exe -m pip` 安装三个实验依赖，再用同一解释器运行脚本。没有修改系统 Python 或完整依赖文件；后续训练所需的完整环境仍需单独处理。
+
+**验证**：使用 Matplotlib 的 `Agg` 后端执行原脚本，退出码为 0。无归一化和使用 RMSNorm 时的最终激活标准差分别约为 `0.016552`、`0.824114`。`plt.show()` 的非交互后端警告符合本次保存图片的运行方式，日常直接运行命令可使用本地交互后端。
+
+#### 💡 疑问解答与实验边界
+
+- **为什么装了依赖还是找不到 torch？** 本次安装没有成功完成；此外，安装和运行必须使用同一个解释器。直接指定 `venv` 的 Python 可以消除解释器歧义。
+- **这是否证明了梯度消失？** 没有。该实验只测量前向激活标准差，没有反向传播；RMSNorm 约束均方根，标准差也不必等于 1。
+
+---
+
+**最后更新**：2026-11-10
 **学习进度**：Tier 1 完成 ✅ + 完整架构理解 ✅
 
 **历史总结**：
@@ -495,3 +520,4 @@ safetensors_rust.SafetensorError: Error while deserializing header: header too l
 - 2025-11-10：Attention + FeedForward + Transformer Block
 - 2025-12-27：确认 Tier 1 完成，准备进入训练阶段
 - 2026-01-18：深入理解完整模型架构 + 权重共享机制
+- 2026-11-10：修复 Windows 归一化实验依赖并成功运行

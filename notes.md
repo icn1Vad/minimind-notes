@@ -73,6 +73,7 @@ keywords: LLM学习笔记, 学习笔记索引, MiniMind笔记, Transformer学习
 - **2025-11-10**: [Attention + FeedForward + Transformer Block](./learning_log.md#2025-11-10-深入理解-attention-注意力机制)
 - **2025-12-27**: [确认 Tier 1 完成](./learning_log.md#2025-12-27完成-tier-1-基础组件学习)
 - **2026-01-18**: [深入理解完整模型架构](./learning_log.md#2026-01-18深入理解完整模型架构)
+- **2026-11-10**: [Windows 归一化实验依赖排障](./learning_log.md#2026-11-10windows-归一化实验依赖排障)
 
 ---
 
@@ -165,5 +166,5 @@ python learning_materials/rope_basics.py
 
 ---
 
-**最后更新**：2026-01-18
+**最后更新**：2026-11-10
 **学习进度**：Tier 1 完成 ✅ + 完整模型架构理解 ✅

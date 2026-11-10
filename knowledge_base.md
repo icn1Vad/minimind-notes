@@ -1635,6 +1635,32 @@ x = RMSNorm(x + FFN(x))        # 先FFN，再归一化
 
 ---
 
+**Q20: Windows 下安装依赖失败后，为什么实验仍然提示找不到 torch？**
+
+A: 本次完整安装在构建 `ujson==5.1.0` 的 wheel 时失败，随后检查确认当前系统 Python 未安装 `torch`。日志里的 `Collecting` 和 `Using cached` 只表示正在解析或获取安装包，不能当作安装成功。
+
+**错误链路**：
+- `requirements.txt` 位于仓库根目录，在实验目录直接用相对路径读取会报文件不存在。
+- 当前解释器是 Windows x64 的 Python 3.11.9。`ujson==5.1.0` 没有对应的 CPython 3.11 wheel，pip 因而尝试源码编译，随后因缺少 Microsoft C++ Build Tools 失败。参考：[PyPI 发布文件](https://pypi.org/project/ujson/5.1.0/#files)。
+- `exp1_gradient_vanishing.py` 只需要 `torch`、`numpy`、`matplotlib`，可以先在项目虚拟环境中安装这三个直接依赖。
+
+**从 PowerShell 运行**：
+
+```powershell
+Set-Location F:\minimind-notes
+.\venv\Scripts\python.exe -m pip install --only-binary=:all: torch==2.6.0 numpy==1.26.4 matplotlib==3.10.0
+.\venv\Scripts\python.exe -c "import torch, numpy, matplotlib; print(torch.__version__, numpy.__version__, matplotlib.__version__)"
+.\venv\Scripts\python.exe -X utf8 .\modules\01-foundation\01-normalization\experiments\exp1_gradient_vanishing.py
+```
+
+直接指定虚拟环境解释器可以避免安装与运行使用不同 Python，也不需要修改 PowerShell 执行策略。以上命令以项目已有 `venv` 为前提；新机器需先运行 `python -m venv venv`。
+
+**范围与后续检查**：这只补齐该实验依赖；完整训练和推理环境仍需单独处理。单独安装新版 `ujson` 后再执行原文件，仍会被 `ujson==5.1.0` 的锁定约束要求安装旧版，不能解决原始依赖文件的问题。
+
+**实验解读**：该脚本测量的是前向激活标准差，没有执行反向传播或测量梯度，因此运行成功不代表已经证明梯度消失；RMSNorm 约束的是均方根，也不保证标准差恰好为 1。
+
+---
+
 ## 📊 重要公式汇总
 
 ### RMSNorm
@@ -1660,4 +1686,4 @@ scores = (Q @ K^T) / sqrt(head_dim)
 
 ---
 
-**最后更新**：2026-01-18
+**最后更新**：2026-11-10
