@@ -32,6 +32,10 @@ class SimplifiedAttention(nn.Module):
     """
     def __init__(self, hidden_size=512, num_heads=8, num_kv_heads=2):
         super().__init__()
+        if num_heads <= 0 or hidden_size <= 0 or hidden_size % num_heads:
+            raise ValueError("hidden_size 必须是 num_heads 的正整数倍")
+        if num_kv_heads <= 0 or num_heads % num_kv_heads:
+            raise ValueError("num_heads 必须是 num_kv_heads 的正整数倍")
         self.num_heads = num_heads
         self.num_kv_heads = num_kv_heads
         self.head_dim = hidden_size // num_heads  # 每个头的维度
@@ -52,7 +56,18 @@ class SimplifiedAttention(nn.Module):
         batch_size, seq_len, _ = x.shape
 
         # 步骤 1: 投影到 Q, K, V
-        # TODO(human)
+        xq = self.q_proj(x).view(batch_size, seq_len, self.num_heads, self.head_dim)
+        xk = self.k_proj(x).view(batch_size, seq_len, self.num_kv_heads, self.head_dim)
+        xv = self.v_proj(x).view(batch_size, seq_len, self.num_kv_heads, self.head_dim)
+
+        # 将头维移到序列维之前：[batch, heads, seq_len, head_dim]。
+        xq = xq.transpose(1, 2)
+        xk = xk.transpose(1, 2)
+        xv = xv.transpose(1, 2)
+
+        # GQA：每组 Query 头共享同一对 Key / Value 头。
+        xk = xk.repeat_interleave(self.n_rep, dim=1)
+        xv = xv.repeat_interleave(self.n_rep, dim=1)
 
         print(f"\n" + "="*60)
         print("📊 Attention 计算流程")
@@ -190,6 +205,7 @@ def explain_gqa():
 # 主程序
 # ============================================================
 if __name__ == "__main__":
+    torch.manual_seed(42)
     print("="*60)
     print("🎯 Multi-Head Attention 深度解析")
     print("="*60)

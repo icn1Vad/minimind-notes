@@ -1678,6 +1678,30 @@ A: 认证成功不代表对目标仓库有写权限。本次 `gh api user` 确�
 
 ---
 
+**Q22: 如何在这台 Windows 电脑上按路线图继续学习？**
+
+A: 使用 `F:\minimind-notes\venv`，从仓库根目录通过 `learn.cmd` 运行 Python。详见 [Windows 本地学习环境](./WINDOWS_SETUP.md)。
+
+```powershell
+Set-Location F:\minimind-notes
+.\learn.cmd scripts/check_learning_env.py --require-cuda
+.\learn.cmd modules/01-foundation/01-normalization/experiments/exp1_gradient_vanishing.py
+```
+
+**已验证的环境（2026-11-10）**：Python 3.11.9、PyTorch 2.9.1+cu128、torchvision 0.24.1+cu128，GPU 为 RTX 5070 Ti Laptop（12GB，计算能力 12.0）。安装时用官方 CUDA 12.8 wheel，重建入口是 `scripts/setup_windows.ps1`。
+
+**部署中处理的问题**：
+
+- `ujson` 改为有 Windows / Python 3.11 wheel 的 5.10.0，保留原始 `requirements.txt`，另提供 `requirements-windows.txt`。
+- 固定 PyArrow 19.0.1。自动解析得到的 PyArrow 26.0.1 在导入时要求 NumPy 2，与教程的 NumPy 1.26.4 冲突；`pip check` 未能发现这个运行时问题，所以检查脚本还会实际导入依赖并执行模型计算。
+- 补齐 Attention 入门和多头实验中的两处 `TODO(human)` 参考实现，避免未定义变量使教程中途退出；多头实现包含 Q/K/V 投影、拆头和 GQA 的 KV 共享。
+
+**验证范围**：12 个 Foundation 实验成功运行，两个训练对比实验使用 `--quick`；MiniMind 在 GPU 上完成一次前向、反向传播和优化器更新；预训练、SFT、LoRA 脚本的 `--help` 均通过。注意力实现还与 PyTorch 内置 SDPA 对比，覆盖 MQA / GQA / MHA、因果掩码和反向传播。
+
+**本地阅读**：已构建文档并启动 [本地路线图](http://127.0.0.1:4173/ROADMAP)，重启后的启动命令见安装说明。TinyShakespeare 缓存可读取；TinyStories、正式训练数据与预训练权重按需准备。部署验证不等于完成学习或正式模型训练。
+
+---
+
 ## 📊 重要公式汇总
 
 ### RMSNorm

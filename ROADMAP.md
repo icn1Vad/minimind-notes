@@ -28,6 +28,8 @@ keywords: LLM学习路线, 大模型训练教程, Transformer教程, 深度学�
 
 ### 准备环境（5 分钟）
 
+**Windows 用户**：先按 [Windows 本地学习环境](./WINDOWS_SETUP.md) 安装，避免旧版依赖的编译问题；RTX 50 系列显卡需要匹配的 CUDA 版 PyTorch。该说明也提供了无需激活虚拟环境的 `learn.cmd` 入口。以下是上游通用安装步骤。
+
 ```bash
 # 1. 克隆仓库
 git clone https://github.com/joyehuang/minimind-notes.git

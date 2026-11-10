@@ -519,6 +519,24 @@ safetensors_rust.SafetensorError: Error while deserializing header: header too l
 
 **验证**：API 确认新仓库具有推送权限；`git push --dry-run origin master` 通过，`git ls-remote` 确认远程提交未变化。用户要求暂不提交，本轮没有新增提交，也没有实际推送；上一轮已有的 `9ab406e` 仍在本地。详细说明见知识库 Q21。
 
+#### ✅ 按路线图部署本地 GPU 学习环境
+
+用户计划继续按 [教程路线图](https://www.minimind.wiki/ROADMAP) 学习，要求部署在 `F:\minimind-notes` 并提交。本轮先提交上一轮排障笔记，再配置环境。
+
+- [x] 在已有 Python 3.11.9 的 `venv` 安装 PyTorch 2.9.1+cu128 / torchvision 0.24.1+cu128，识别 RTX 5070 Ti Laptop GPU（12GB，计算能力 12.0）。
+- [x] 添加 Windows 依赖配置、安装脚本、环境检查脚本、`learn.cmd` 和 `WINDOWS_SETUP.md`，在路线图添加入口。
+- [x] 解决旧 ujson 编译失败、PyArrow 26 与 NumPy 1.26 不兼容的问题，并补齐通用可视化工具的 seaborn 依赖。
+- [x] 12 个 Foundation 实验运行通过；归一化训练对比使用快速模式，四张图保存在该模块的 `experiments/results/`。
+- [x] MiniMind 在 GPU 上完成一次优化器更新；预训练、SFT、LoRA 的命令行入口通过，TinyShakespeare 缓存读取成功。
+
+**教程代码补全**：Attention 入门脚本的 `attention_weights`、多头脚本的 `xq/xk/xv` 原为 `TODO(human)` 占位，直接运行会报 `NameError`。已补齐最小参考实现。多头计算与 PyTorch 内置 SDPA 在 KV 头数为 1、2、4 时一致，因果掩码、归一化权重和梯度检查通过。
+
+**本地文档**：`pnpm install --frozen-lockfile` 安装前端依赖，仅允许 esbuild 执行必要的构建脚本；文档构建成功，本地预览运行于 `http://127.0.0.1:4173`，路线图和 Windows 说明均返回 HTTP 200。
+
+**构建修复**：完整 Python 依赖安装后，VitePress 会误扫 `venv/Lib/site-packages/huggingface_hub/templates/modelcard_template.md`，其模板语法导致 Vue 解析失败。已在 `.vitepress/config.ts` 的 `srcExclude` 排除 `venv/`、`.venv/`、`env/`，避免依赖包进入教程站点。
+
+**范围**：未启动长时间训练，TinyStories 和正式训练数据按需下载。现有 `modules/common/data/` 加入忽略规则，保留其中的用户数据，不提交虚拟环境、缓存或权重。详细命令和验证边界见知识库 Q22。
+
 **最后更新**：2026-11-10
 **学习进度**：Tier 1 完成 ✅ + 完整架构理解 ✅
 

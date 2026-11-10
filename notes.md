@@ -61,6 +61,7 @@ keywords: LLM学习笔记, 学习笔记索引, MiniMind笔记, Transformer学习
 | 主题 | 查看位置 |
 |------|----------|
 | 环境搭建问题 | [learning_log.md § 2025-11-06](./learning_log.md#2025-11-06环境搭建--首次运行模型--性能测试) |
+| Windows GPU 学习环境 | [WINDOWS_SETUP.md](./WINDOWS_SETUP.md) |
 | RMSNorm 原理 | [knowledge_base.md § 归一化机制](./knowledge_base.md#1-归一化机制) |
 | RoPE 原理 | [knowledge_base.md § 位置编码](./knowledge_base.md#2-位置编码) |
 | 问题解答 | [knowledge_base.md § 问答记录](./knowledge_base.md#问答记录) |

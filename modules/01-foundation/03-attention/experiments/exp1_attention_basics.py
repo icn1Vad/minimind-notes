@@ -166,7 +166,9 @@ Attention 如何解决这个问题？
     for name, vec in zip(word_names, words):
         print(f"  {name:6s}: {vec.numpy()}")
 
-    # TODO(human)
+    # 与前一个简化示例一致，令 Q = K = words，再归一化每行分数。
+    scores = words @ words.T
+    attention_weights = F.softmax(scores, dim=-1)
 
     print("\n" + "="*70)
     print("观察:")
